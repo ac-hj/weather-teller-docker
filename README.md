@@ -8,9 +8,9 @@ This app allows you to look at the current weather anywhere in the world by clic
 Based on the current weather, the potato character will change to reflect the weather!
 
 ### How to use
-1) Sign up for Google Maps and OpenWeatherMap APIs -- both are free to use. Replace "[Your API Key]" with yours in weatherpage.ejs file 
-2) Run node app.js on the terminal and go to http://localhost:8080/ on browser
-3) Click "How to use" to read more about the app
+1) Sign up for Google Maps and OpenWeatherMap APIs -- both are free to use 
+2) Replace "[Your API Key]" with yours in weatherpage.ejs file
+3) Run node app.js on the terminal and go to http://localhost:8080/ on browser
 
 ## Tech Stack
 - Node.js
