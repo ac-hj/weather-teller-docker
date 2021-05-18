@@ -1,0 +1,328 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<title>Map</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script defer src="https://maps.googleapis.com/maps/api/js?key=[Your API Key]&callback=initMap"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		var map;
+		var marker;
+		var loc;
+		var weather;
+		
+		// Initializing the map
+		var initMap = function() {
+			const styledMapType = new google.maps.StyledMapType(
+				[
+					{ elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+					{ elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+					{ elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+					{
+					featureType: "administrative.locality",
+					elementType: "labels.text.fill",
+					stylers: [{ color: "#d59563" }],
+					},
+					{
+					featureType: "poi",
+					elementType: "labels.text.fill",
+					stylers: [{ color: "#d59563" }],
+					},
+					{
+					featureType: "poi.park",
+					elementType: "geometry",
+					stylers: [{ color: "#263c3f" }],
+					},
+					{
+					featureType: "poi.park",
+					elementType: "labels.text.fill",
+					stylers: [{ color: "#6b9a76" }],
+					},
+					{
+					featureType: "road",
+					elementType: "geometry",
+					stylers: [{ color: "#38414e" }],
+					},
+					{
+					featureType: "road",
+					elementType: "geometry.stroke",
+					stylers: [{ color: "#212a37" }],
+					},
+					{
+					featureType: "road",
+					elementType: "labels.text.fill",
+					stylers: [{ color: "#9ca5b3" }],
+					},
+					{
+					featureType: "road.highway",
+					elementType: "geometry",
+					stylers: [{ color: "#746855" }],
+					},
+					{
+					featureType: "road.highway",
+					elementType: "geometry.stroke",
+					stylers: [{ color: "#1f2835" }],
+					},
+					{
+					featureType: "road.highway",
+					elementType: "labels.text.fill",
+					stylers: [{ color: "#f3d19c" }],
+					},
+					{
+					featureType: "transit",
+					elementType: "geometry",
+					stylers: [{ color: "#2f3948" }],
+					},
+					{
+					featureType: "transit.station",
+					elementType: "labels.text.fill",
+					stylers: [{ color: "#d59563" }],
+					},
+					{
+					featureType: "water",
+					elementType: "geometry",
+					stylers: [{ color: "#17263c" }],
+					},
+					{
+					featureType: "water",
+					elementType: "labels.text.fill",
+					stylers: [{ color: "#515c6d" }],
+					},
+					{
+					featureType: "water",
+					elementType: "labels.text.stroke",
+					stylers: [{ color: "#17263c" }],
+					},
+				],
+				{ name: "Styled Map" }
+			);
+			var myOptions = {
+				center: new google.maps.LatLng(39.952335,-75.163789),
+				zoom: 5, 
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
+			map = new google.maps.Map(document.getElementById('map'),
+				    myOptions);
+
+			map.mapTypes.set("styled_map", styledMapType);
+  			map.setMapTypeId("styled_map");
+
+		
+			if (marker != null) {
+				marker.setMap(map);
+			}
+
+
+			google.maps.event.addListener(map, 'click', function(event) {
+				document.getElementById('latitude').value = event.latLng.lat();
+				document.getElementById('longitude').value = event.latLng.lng();
+				if (marker != null){
+					marker.setMap(null);
+				}
+				displayMarker(event.latLng.lat(), event.latLng.lng())
+			});
+		};
+
+		function displayMarker(latitude, longitude) {
+			marker = new google.maps.Marker({
+		 						position: new google.maps.LatLng(parseFloat(latitude), parseFloat(longitude)),
+			 					draggable: false,
+			 					map,
+			 					icon: {
+			 						url: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+			 					}
+		 					});
+			marker.setMap(map);
+		}
+
+		$(document).ready(function() {
+			$(".card").css("display", "none");
+			$('#update').on("click", function() {
+				var latitude = document.getElementById("latitude").value;
+				var longitude = document.getElementById("longitude").value;
+				$(".sub-info").css("display", "none");
+				$(".card").css("display", "flex");
+				$.getJSON('http://api.openweathermap.org/data/2.5/weather?', {
+					lat: latitude,
+					lon: longitude,
+					appid: "[Your API Key]"
+				}, function(data) {
+					console.log(data)
+					loc = data["name"]
+					weather = data["main"]
+					cloud = data["weather"][0]["description"]
+					document.getElementById("weather-card").innerHTML = `Weather for ${loc} right now`;
+					document.getElementById("weather-details").innerHTML = `
+						Feels like: ${weather["feels_like"] - 273.15 + " °C"} <br>
+						Cloud: ${cloud} <br>
+						Humidity: ${weather["humidity"]} <br>
+						Temperature: ${weather["temp"]} <br>
+						Temperature High: ${weather["temp_max"]} <br>
+						Temperature Low: ${weather["temp_min"]} <br>
+						<div class="form-group mx-sm-3 mb-2">
+								<button id="back" class="btn btn-light">Go back</button>
+						</div>
+					`
+					if (cloud.toLowerCase().includes("cloud")) {
+						$("#me").attr('src',"../styles/Potato_Cloud.gif");
+					} else if (cloud.toLowerCase().includes("rain")) {
+						$("#me").attr('src',"../styles/Potato_Rainy.gif");
+					} else if (cloud.toLowerCase().includes("sun")) {
+						$("#me").attr('src',"../styles/Potato_Sunny.png");
+					} 
+
+					$('#back').on("click", function() {
+						$(".sub-info").css("display", "flex");
+						$(".card").css("display", "none");
+					});
+				});
+
+				
+			});
+
+		});
+
+
+	</script>
+	<style>
+		
+		.background {
+			/* background-image: linear-gradient(#61B5D5, #8D61D5, #F3B8C9); */
+			background-image: url("../styles/background-2.png");
+			background-size: 100vw 100vh;
+			height: 100vh;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+		}
+
+
+		#map {
+			height: 60vh;
+			width: 60vh;
+			border-radius: 30px;
+			margin-right: 5vw;
+		}
+
+		.sub-background {
+			background : rgba(250, 250, 250, 0.7);
+			border-radius: 30px;
+			width: 95vw;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			height: 70vh;
+		}
+
+		#info {
+			display: flex;
+			flex-direction: row;
+			border-radius: 30px;
+			width: 50vw;
+		}
+
+		#me {
+			height: 32vw;
+		}
+
+		#instruction {
+			font-size: 3vh;
+			width: 25vw;
+			text-align: center;
+		}
+
+		.sub-info {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		#weather-card {
+			font-size: 5vh;
+			text-align: center;
+		}
+
+		input[type=text] {
+			background-color: transparent;
+			box-shadow: inset 0px 0px 0px 0px red;
+			outline-color: black;
+			outline: 0;
+		}
+
+		input {
+			border: 0;
+			outline: 0;
+			border-bottom: 2px solid black;
+		}
+
+		input[type=text]:focus{
+			outline: none;     
+		}
+
+		.loc-form {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 14vh;
+		}
+
+		.card {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		#weather-details {
+			font-size: 2vh;
+			text-align: center;
+		}
+
+		#back {
+			margin-top: 1vh;
+		}
+		
+	  </style>  
+</head>
+<body>
+   <div class="background">
+	 <div class="sub-background">
+		<div>
+			<div class="container bg-light" id="info">
+				<p class="text-muted">
+					<img id="me" src="../styles/Potato_Anim-2.gif"></img>
+					<div class="sub-info">
+						<p id="instruction" style='margin-bottom: 0; padding-top: 2%;'> Click any location on the map or manually add latitude and longitude values! </p>
+						<br>
+						<div class="form-inline loc-form" style="align-items: center;">
+							<div class="form-group mx-sm-3 mb-2">
+								<label for="latitudeInput"></label>
+								<input id="latitude" type="text" autocomplete="off" name="latitude" placeholder="Enter latitude" required>
+							</div>
+							<div class="form-group mx-sm-3 mb-2">
+								<label for="longitude"></label>
+								<input id="longitude" type="text" autocomplete="off" name="longitude" placeholder="Enter longitude" required>
+							</div>
+							<div class="form-group mx-sm-3 mb-2">
+								<button id="update" class="btn btn-light">Find</button>
+							</div>
+						</div>
+					</div>
+				</p>
+				<div class="card" style="width: 35vw;">
+					<div class="card-body">
+						<h5 class="card-title" id="weather-card"></h5>
+						<p class="card-text" id="weather-details"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="map"></div>
+	 </div>
+	</div>
+</body>
+</html>
