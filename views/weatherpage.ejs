@@ -155,7 +155,7 @@
 					document.getElementById("weather-card").innerHTML = `Weather for ${loc} right now`;
 					document.getElementById("weather-details").innerHTML = `
 						Feels like: ${weather["feels_like"] - 273.15 + " °C"} <br>
-						Cloud: ${cloud} <br>
+						Description: ${cloud} <br>
 						Humidity: ${weather["humidity"]} <br>
 						Temperature: ${weather["temp"]} <br>
 						Temperature High: ${weather["temp_max"]} <br>
@@ -168,7 +168,7 @@
 						$("#me").attr('src',"../styles/Potato_Cloud.gif");
 					} else if (cloud.toLowerCase().includes("rain")) {
 						$("#me").attr('src',"../styles/Potato_Rainy.gif");
-					} else if (cloud.toLowerCase().includes("sun")) {
+					} else if (cloud.toLowerCase().includes("sun") || cloud.toLowerCase().includes("clear") ) {
 						$("#me").attr('src',"../styles/Potato_Sunny.png");
 					} 
 
