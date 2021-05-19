@@ -27,3 +27,7 @@ Based on the current weather, the potato character will change to reflect the we
 ## Design Credits
 - Main page background design was inspired by Art with Flo (https://www.youtube.com/watch?v=RzH3DCvsTx0&t=270s&ab_channel=ArtwithFlo)
 - Potato character design was inspired by Angela Kalokairinou (https://www.youtube.com/watch?v=RBUr9RdMMik&ab_channel=AngelaKalokairinou)
+
+##  Next Steps
+- Add more potato character designs to account for other different weathers. Currently there are sunny, cloudy, and rainy.
+- Add more designs to the weather description div box
