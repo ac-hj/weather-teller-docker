@@ -1,10 +1,10 @@
 # Weather Teller ⛅️
 
 ## Introduction
-A project built to review EJS and Ajax/JQuery, as well as to have fun designing characters in the app.
+A simple web app project built to review EJS and Ajax/JQuery and to have fun with designing characters in the app.
 
 ### Purpose
-This app allows you to look at the current weather anywhere in the world by clicking locations on the displayed map or manually adding longitude/latitude.
+This app allows you to look at the current weather anywhere in the world by clicking locations on the displayed map or manually adding longitude/latitude values.
 Based on the current weather, the potato character will change to reflect the weather!
 
 ### How to use
@@ -21,8 +21,8 @@ Based on the current weather, the potato character will change to reflect the we
 
 ## APIs
 - Bootstrap
-- OpenWeatherMap API
 - Google Maps API
+- OpenWeatherMap API
 
 ## Design Credits
 - Main page background design was inspired by Art with Flo (https://www.youtube.com/watch?v=RzH3DCvsTx0&t=270s&ab_channel=ArtwithFlo)
