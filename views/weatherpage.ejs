@@ -136,14 +136,45 @@
 			marker.setMap(map);
 		}
 
+		function setWeatherForecast(today, months, days, day) {
+			today.setDate(today.getDate() + 1);
+					var dd = String(today.getDate()).padStart(2, '0');
+					var mm = months[today.getMonth()]; //January is 0!
+					var yyyy = today.getFullYear();
+					today_d = mm + " " + dd + ', ' + yyyy;
+
+					console.log(days)
+					console.log(days[0])
+					var descript = days[day-2]["weather"][0]["description"]
+					var id_1 = "d" + day;
+					var id_2 = "d" + day + "_t";
+					var emoji_p = ""
+					if (descript.toLowerCase().includes("sun") || descript.toLowerCase().includes("clear")) {
+						emoji_p = "../styles/Sun.png" 
+					} else if (descript.toLowerCase().includes("cloud")) {
+						emoji_p = "../styles/Clouds.png"
+					} else if (descript.toLowerCase().includes("rain")) {
+						emoji_p = "../styles/Rain.png"
+					}
+					document.getElementById(id_1).innerHTML = `${today_d}`;
+					document.getElementById(id_2).innerHTML = ` <img id="weather-pic" src=${emoji_p}></img><br>
+															${descript[0].toUpperCase() + descript.slice(1).toLowerCase()} <br>
+															Highest temp: ${Number(days[day-2]["temp"]["max"] - 273.15).toFixed(1) + " °C"} <br>
+															Lowesss temp: ${Number(days[day-2]["temp"]["min"] - 273.15).toFixed(1) + " °C"}
+														   `;
+		}
+
 		$(document).ready(function() {
 			$(".card").css("display", "none");
+			$(".background-2").css("display", "none");
+			$("#arrow").css("display", "none");
 			$('#update').on("click", function() {
 				var latitude = document.getElementById("latitude").value;
 				var longitude = document.getElementById("longitude").value;
 				$(".sub-info").css("display", "none");
 				$(".card").css("display", "flex");
-				$.getJSON('http://api.openweathermap.org/data/2.5/weather?', {
+				$(".background-2").css("display", "flex");
+				$.getJSON('https://api.openweathermap.org/data/2.5/weather?', {
 					lat: latitude,
 					lon: longitude,
 					appid: "[Your API Key]"
@@ -153,13 +184,13 @@
 					weather = data["main"]
 					cloud = data["weather"][0]["description"]
 					document.getElementById("weather-card").innerHTML = `Weather for ${loc} right now`;
+					document.getElementById("seven-forecast").innerHTML = `7-day forecast for ${loc}`
 					document.getElementById("weather-details").innerHTML = `
-						Feels like: ${weather["feels_like"] - 273.15 + " °C"} <br>
+						Feels like: ${Number(weather["feels_like"] - 273.15).toFixed(1) + " °C"} <br>
 						Description: ${cloud} <br>
 						Humidity: ${weather["humidity"]} <br>
-						Temperature: ${weather["temp"]} <br>
-						Temperature High: ${weather["temp_max"]} <br>
-						Temperature Low: ${weather["temp_min"]} <br>
+						Temperature High: ${Number(weather["temp_max"] - 273.15).toFixed(1) + " °C"} <br>
+						Temperature Low: ${Number(weather["temp_min"] - 273.15).toFixed(1) + " °C"} <br>
 						<div class="form-group mx-sm-3 mb-2">
 								<button id="back" class="btn btn-light">Go back</button>
 						</div>
@@ -175,11 +206,64 @@
 					$('#back').on("click", function() {
 						$(".sub-info").css("display", "flex");
 						$(".card").css("display", "none");
+						$(".background-2").css("display", "none");
+						$("#arrow").css("display", "none");
 					});
 				});
 
-				
-			});
+				// Get 7-day forecast using a different API
+				// Could have used this for current weather too but this API does not include the location name
+				$.getJSON('https://api.openweathermap.org/data/2.5/onecall?',  {
+					lat: latitude,
+					lon: longitude,
+					appid: "[Your API Key]"
+				}, function(data) {
+					console.log(data)
+					weather = data["daily"]
+					day_1 = weather[1]
+					day_2 = weather[2]
+					day_3 = weather[3]
+					day_4 = weather[4]
+					day_5 = weather[5]
+					day_6 = weather[6]
+					day_7 = weather[7]
+
+					var months = [ "January", "February", "March", "April", "May", "June",
+									"July", "August", "September", "October", "November", "December" ];	
+					var days = [day_2, day_3, day_4, day_5, day_6, day_7]
+					// Set dates 
+
+					// day 1
+					var today = new Date();
+					var dd = String(today.getDate()).padStart(2, '0');
+					var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+					var yyyy = today.getFullYear();
+					today_d = mm + '/' + dd + '/' + yyyy;
+
+					var descript = day_1["weather"][0]["description"]
+					var emoji_p = ""
+					if (descript.toLowerCase().includes("sun") || descript.toLowerCase().includes("clear")) {
+						emoji_p = "../styles/Sun.png" 
+					} else if (descript.toLowerCase().includes("cloud")) {
+						emoji_p = "../styles/Clouds.png"
+					} else if (descript.toLowerCase().includes("rain")) {
+						emoji_p = "../styles/Rain.png"
+					}
+					console.log(emoji_p)
+					document.getElementById("d1").innerHTML = `Tomorrow`;
+					document.getElementById("d1_t").innerHTML = ` <img id="weather-pic" src=${emoji_p}></img><br>
+															${descript[0].toUpperCase() + descript.slice(1).toLowerCase()} <br>
+															Highest temp: ${Number(day_1["temp"]["max"] - 273.15).toFixed(1) + " °C"} <br>
+															Lowesss temp: ${Number(day_1["temp"]["min"] - 273.15).toFixed(1) + " °C"}
+														   `;
+					var i;
+					for (i = 2; i < 8; i ++) {
+						setWeatherForecast(today, months, days, i);
+					}
+					$("#arrow").css("display", "flex");
+
+				});
+			})
 
 		});
 
@@ -193,7 +277,7 @@
 			background-size: 100vw 100vh;
 			height: 100vh;
 			display: flex;
-			flex-direction: row;
+			flex-direction: column;
 			justify-content: center;
 			align-items: center;
 		}
@@ -266,7 +350,7 @@
 		.loc-form {
 			display: flex;
 			flex-direction: column;
-			justify-content: space-between;
+			justify-content: space-evenly;
 			height: 14vh;
 		}
 
@@ -285,44 +369,218 @@
 		#back {
 			margin-top: 1vh;
 		}
-		
+
+		.background-2 {
+			/* background-image: linear-gradient(#61B5D5, #8D61D5, #F3B8C9); */
+			background-image: url("../styles/background-2\ copy.png");
+			background-size: 100vw 100vh;
+			height: 60vh;
+			display: flex; 
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: center;
+		}
+
+		.forecast {
+			display: flex;
+			flex-flow: row wrap;
+			justify-content: space-around;
+			align-items: center;
+			flex: auto;
+			/* flex: 2 1 auto; */
+			height: 50vh;
+			max-width: 95vw;
+			flex-shrink: 0;
+			flex-wrap: wrap;
+			margin-right: 0px;
+		}
+
+		#fore {
+			background : rgba(250,250,250, 0.7);
+			height: 32vh;
+			border-radius: 30px;
+			width: 22vh;
+			margin-left: 10px;
+			margin-right: 10px;
+			margin-bottom: 10px;
+			flex-shrink: 0;
+			flex-wrap: wrap;
+			/* margin-left: 2vw; */
+			padding: 0px !important;
+		}
+
+		#weather-pic {
+			width: 13vh;
+			height: 13vh;
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			background-color: rgba(0,0,0, 0.3);
+			border-radius: 30px;
+		}
+
+		/* #fore-1 {
+			background : rgba(250, 250, 250, 0.7);
+			height: 30vh;
+			border-radius: 100%;
+			width: 30vh;
+		}
+		 */
+
+		#d1, #d2, #d3, #d4, #d5, #d6, #d7 {
+			background-color:#0B1345;
+			color: white;
+			text-align: center;
+			padding: 8px;
+			border-radius: 30px;
+			margin-top: 7px;
+		}
+
+		#seven-forecast {
+			font-size: 5vh;
+			text-align: center;
+		}
+
+		@keyframes bouncing {
+			0% {bottom: 1vh;}
+			50% {bottom: 2vh;}
+			100% {bottom: 1vh;}
+		}
+
+		#arrow {
+			/* animation: bouncing 1s infinite ease-in-out; */
+			bottom: 0vh;
+			display: flex;
+			width: 7vh;
+			height: 7vh;
+			justify-content: center;
+			align-items: center;
+			position: fixed;
+			font-family: 'Mandali', sans-serif;
+			border-radius: 100%;
+			text-decoration: none;
+			margin-bottom: 1vh;
+			/* border-right: 1mm solid black;
+			border-left: 1mm solid black; */
+		}
+
+		#arrow-bkg {
+			animation: bouncing 1s infinite ease-in-out;
+			bottom: 0vh;
+			display: flex;
+			width: 100%;
+			background-color:rgba(250, 244, 240, 0.9);
+			justify-content: center;
+			width: 8vh;
+			height: 8vh;
+			border: 3px solid black;
+			align-items: center;
+			border-radius: 100%;
+			position: fixed;
+			font-family: 'Mandali', sans-serif;
+		}
+
+		#arrow p {
+			font-size: 5vh;
+			color: black;
+			text-align: center;
+		}
+
+		#arrow p:hover {
+			color: white;
+		}
 	  </style>  
 </head>
 <body>
    <div class="background">
-	 <div class="sub-background">
-		<div>
-			<div class="container bg-light" id="info">
-				<p class="text-muted">
-					<img id="me" src="../styles/Potato_Anim-2.gif"></img>
-					<div class="sub-info">
-						<p id="instruction" style='margin-bottom: 0; padding-top: 2%;'> Click any location on the map or manually add latitude and longitude values! </p>
-						<br>
-						<div class="form-inline loc-form" style="align-items: center;">
-							<div class="form-group mx-sm-3 mb-2">
-								<label for="latitudeInput"></label>
-								<input id="latitude" type="text" autocomplete="off" name="latitude" placeholder="Enter latitude" required>
-							</div>
-							<div class="form-group mx-sm-3 mb-2">
-								<label for="longitude"></label>
-								<input id="longitude" type="text" autocomplete="off" name="longitude" placeholder="Enter longitude" required>
-							</div>
-							<div class="form-group mx-sm-3 mb-2">
-								<button id="update" class="btn btn-light">Find</button>
+	 	<div class="sub-background">
+			<div>
+				<div class="container bg-light" id="info">
+					<p class="text-muted">
+						<img id="me" src="../styles/Potato_Anim-2.gif"></img>
+						<div class="sub-info">
+							<p id="instruction" style='margin-bottom: 0; padding-top: 2%;'> Click any location on the map or manually add latitude and longitude values! </p>
+							<br>
+							<div class="form-inline loc-form" style="align-items: center;">
+								<div class="form-group mx-sm-3 mb-2">
+									<label for="latitudeInput"></label>
+									<input id="latitude" type="text" autocomplete="off" name="latitude" placeholder="Enter latitude" required>
+								</div>
+								<div class="form-group mx-sm-3 mb-2">
+									<label for="longitude"></label>
+									<input id="longitude" type="text" autocomplete="off" name="longitude" placeholder="Enter longitude" required>
+								</div>
+								<div class="form-group mx-sm-3 mb-2">
+									<button id="update" class="btn btn-light">Find</button>
+								</div>
 							</div>
 						</div>
-					</div>
-				</p>
-				<div class="card" style="width: 35vw;">
-					<div class="card-body">
-						<h5 class="card-title" id="weather-card"></h5>
-						<p class="card-text" id="weather-details"></p>
+					</p>
+					<div class="card" style="width: 35vw;">
+						<div class="card-body">
+							<h5 class="card-title" id="weather-card"></h5>
+							<p class="card-text" id="weather-details"></p>
+						</div>
 					</div>
 				</div>
 			</div>
+			<div id="map"></div>
+	 	</div>
+		 <a id="arrow" href="#seven-forecast">
+			<div id="arrow-bkg">
+				<p id="arrow-p">
+					v
+				</p>
+			</div>
+		</a>
+	</div>
+	<div class="background-2">
+		<p id="seven-forecast"></p>
+		<div class="forecast">
+			<div class="card" id="fore">
+				<div class="card-body">
+				  <h5 class="card-title" id="d1"></h5>
+				  <p class="card-text" id="d1_t"></p>
+				  <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+				</div>
+			</div>
+			<div class="card" id="fore">
+				<div class="card-body">
+				  <h5 class="card-title" id="d2"></h5>
+				  <p class="card-text" id="d2_t"></p>
+				</div>
+			</div>
+			<div class="card" id="fore">
+				<div class="card-body">
+				  <h5 class="card-title" id="d3"></h5>
+				  <p class="card-text" id="d3_t"></p>
+				</div>
+			</div>
+			<div class="card" id="fore">
+				<div class="card-body">
+				  <h5 class="card-title" id="d4"></h5>
+				  <p class="card-text" id="d4_t"></p>
+				</div>
+			</div>
+			<div class="card" id="fore">
+				<div class="card-body">
+				  <h5 class="card-title" id="d5"></h5>
+				  <p class="card-text" id="d5_t"></p>
+				</div>
+			</div>
+			<div class="card" id="fore">
+				<div class="card-body">
+				  <h5 class="card-title" id="d6"></h5>
+				  <p class="card-text" id="d6_t"></p>
+				</div>
+			</div>
+			<div class="card" id="fore">
+				<div class="card-body">
+				  <h5 class="card-title" id="d7"></h5>
+				  <p class="card-text" id="d7_t"></p>
+				</div>
+			</div>
 		</div>
-		<div id="map"></div>
-	 </div>
 	</div>
 </body>
 </html>
