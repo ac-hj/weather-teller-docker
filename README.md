@@ -42,5 +42,6 @@ Screenshots of the app:
 - Potato character design was inspired by Angela Kalokairinou (https://www.youtube.com/watch?v=RBUr9RdMMik&ab_channel=AngelaKalokairinou)
 
 ##  Next Steps
-- Add more potato character designs to account for other different weathers. Currently there are sunny, cloudy, and rainy.
-- Add more designs to the weather description div box
+- [ ] Add 7-day weather forecast feature
+- [ ] Add more potato character designs to account for other different weathers. Currently there are sunny, cloudy, and rainy.
+- [ ] Add more designs to the weather description div box
