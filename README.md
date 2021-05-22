@@ -43,5 +43,5 @@ Screenshots of the app:
 
 ##  Next Steps
 - [x] Add 7-day weather forecast feature (5/21)
-- [ ] Add more potato character designs to account for other different weathers. Currently there are sunny, cloudy, and rainy.
-- [ ] Add more designs to the weather description div box
+- [x] Add celsius/farenheit change (5/21)
+- [ ] Add more potato character designs to account for other different weathers. Currently there are sunny, cloudy, and rainy
