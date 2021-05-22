@@ -47,3 +47,7 @@ Screenshots of the app:
 - [x] Add 7-day weather forecast feature (5/21)
 - [x] Add celsius/farenheit change (5/21)
 - [ ] Add more potato character designs to account for other different weathers. Currently there are sunny, cloudy, and rainy
+
+## Random learnings:
+- To delete some commit histories, do git log, git rebase git rebase -i <commit_hash>, and then change pick to drop. and then push?
+https://stackoverflow.com/questions/30893040/git-remove-commit-from-history
