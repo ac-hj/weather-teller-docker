@@ -19,8 +19,9 @@ Sample demo of the weather page:
 
 Screenshots of the app:
 
-<img src="https://github.com/ac-hj/weather-teller/blob/master/demo/home-demo.png" alt="drawing" width="600"/>
-<img src=https://github.com/ac-hj/weather-teller/blob/master/demo/weather-demo.png alt="drawing" width="600"/>
+<img src="https://github.com/ac-hj/weather-teller/blob/master/demo/home-demo.png" alt="homepage" width="600"/>
+<img src=https://github.com/ac-hj/weather-teller/blob/master/demo/weather-demo.png alt="weather-page" width="600"/>
+<img src=https://github.com/ac-hj/weather-teller/blob/master/styles/forecast.png alt="forecast" width="600"/>
 
 ### How to use
 1) Sign up for Google Maps and OpenWeatherMap APIs -- both are free to use 
