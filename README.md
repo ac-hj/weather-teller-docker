@@ -51,3 +51,4 @@ Screenshots of the app:
 ## Random learnings:
 - To delete some commit histories, do git log, git rebase git rebase -i <commit_hash>, and then change pick to drop. and then push?
 https://stackoverflow.com/questions/30893040/git-remove-commit-from-history
+- also git reset --hard doesn't work sometimes :(( gets confusing when using different branches
