@@ -7,7 +7,7 @@ A simple web app project built to review EJS and Ajax/JQuery and to have fun wit
 This app allows you to look at the current weather anywhere in the world by clicking locations on the displayed map or manually adding longitude/latitude values.
 Based on the current weather, the potato character will change to reflect the weather!
 
-UPDATED (5/21): Now has 7-day forecast feature, as well as farenheit/celsius conversion!
+UPDATED (5/21): Now has 7-day forecast feature + farenheit/celsius conversion!
 
 ### Demo
 
