@@ -104,16 +104,12 @@
 			};
 			map = new google.maps.Map(document.getElementById('map'),
 				    myOptions);
-
 			map.mapTypes.set("styled_map", styledMapType);
   			map.setMapTypeId("styled_map");
-
 		
 			if (marker != null) {
 				marker.setMap(map);
 			}
-
-
 			google.maps.event.addListener(map, 'click', function(event) {
 				document.getElementById('latitude').value = event.latLng.lat();
 				document.getElementById('longitude').value = event.latLng.lng();
@@ -123,7 +119,6 @@
 				displayMarker(event.latLng.lat(), event.latLng.lng())
 			});
 		};
-
 		function displayMarker(latitude, longitude) {
 			marker = new google.maps.Marker({
 		 						position: new google.maps.LatLng(parseFloat(latitude), parseFloat(longitude)),
@@ -135,14 +130,12 @@
 		 					});
 			marker.setMap(map);
 		}
-
-		function setWeatherForecast(today, months, days, day) {
+		function setWeatherForecast(today, months, days, day, celsius) {
 			today.setDate(today.getDate() + 1);
 					var dd = String(today.getDate()).padStart(2, '0');
 					var mm = months[today.getMonth()]; //January is 0!
 					var yyyy = today.getFullYear();
 					today_d = mm + " " + dd + ', ' + yyyy;
-
 					console.log(days)
 					console.log(days[0])
 					var descript = days[day-2]["weather"][0]["description"]
@@ -157,14 +150,100 @@
 						emoji_p = "../styles/Rain.png"
 					}
 					document.getElementById(id_1).innerHTML = `${today_d}`;
-					document.getElementById(id_2).innerHTML = ` <img id="weather-pic" src=${emoji_p}></img><br>
-															${descript[0].toUpperCase() + descript.slice(1).toLowerCase()} <br>
-															Highest temp: ${Number(days[day-2]["temp"]["max"] - 273.15).toFixed(1) + " °C"} <br>
-															Lowesss temp: ${Number(days[day-2]["temp"]["min"] - 273.15).toFixed(1) + " °C"}
-														   `;
+					if (celsius) {
+						document.getElementById(id_2).innerHTML = ` <img id="weather-pic" src=${emoji_p}></img><br>
+																${descript[0].toUpperCase() + descript.slice(1).toLowerCase()} <br>
+																<p id=${id_3}> Highest temp: ${Number(days[day-2]["temp"]["max"] - 273.15).toFixed(1) + " °C"} <br>
+																Lowest temp: ${Number(days[day-2]["temp"]["min"] - 273.15).toFixed(1) + " °C</p>"}
+															`;
+					} else {
+						document.getElementById(id_2).innerHTML = ` <img id="weather-pic" src=${emoji_p}></img><br>
+																${descript[0].toUpperCase() + descript.slice(1).toLowerCase()} <br>
+																<p id=${id_3}>Highest temp: ${Number((days[day-2]["temp"]["max"] - 273.15) * 9/5 + 32).toFixed(1) + " °F"} <br>
+																Lowest temp: ${Number((days[day-2]["temp"]["min"] - 273.15) * 9/5 + 32).toFixed(1) + " °F</p>"}
+															`;
+					}
 		}
-
+		function updateWeatherForecast(days, i) {
+			var id = "temp_" + i;
+			if (temp) {
+				document.getElementById(id).innerHTML = `
+															Highest temp: ${Number(days[i-2]["temp"]["max"] - 273.15).toFixed(1) + " °C"} <br>
+															Lowest temp: ${Number(days[i-2]["temp"]["min"] - 273.15).toFixed(1) + " °C"}
+														`;
+			} else {
+				document.getElementById(id).innerHTML = `
+															Highest temp: ${Number((days[i-2]["temp"]["max"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
+															Lowest temp: ${Number((days[i-2]["temp"]["min"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"}
+														`;
+			}
+		}
 		$(document).ready(function() {
+			$("#farenheit").on("click", function(){
+				$("#farenheit").addClass("active");
+				$("#celsius").removeClass("active");
+				temp = false;
+				
+				console.log(weather)
+				document.getElementById("weather-details").innerHTML = `
+				Feels like: ${Number((weather["feels_like"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
+				Description: ${cloud} <br>
+				Humidity: ${weather["humidity"]} <br>
+				Temperature High: ${Number((weather["temp_max"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
+				Temperature Low: ${Number((weather["temp_min"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
+				<div class="form-group mx-sm-3 mb-2">
+						<button id="back" class="btn btn-light">Go back</button>
+				</div>
+			`	
+				console.log(days)
+				document.getElementById("temps_1").innerHTML = `
+														Highest temp: ${Number((days[6]["temp"]["max"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
+														Lowest temp: ${Number((days[6]["temp"]["min"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"}
+													`;
+				var i;
+				for (i = 2; i < 8; i ++) {
+					updateWeatherForecast(days, i);
+				}
+				$('#back').on("click", function() {
+						$(".sub-info").css("display", "flex");
+						$(".card").css("display", "none");
+						$(".background-2").css("display", "none");
+						$("#arrow").css("display", "none");
+				});
+			})
+			$("#celsius").on("click", function(){
+				$("#celsius").addClass("active");
+				$("#farenheit").removeClass("active");
+				temp = true;
+				document.getElementById("weather-details").innerHTML = `
+				Feels like: ${Number(weather["feels_like"] - 273.15).toFixed(1) + " °C"} <br>
+				Description: ${cloud} <br>
+				Humidity: ${weather["humidity"]} <br>
+				Temperature High: ${Number(weather["temp_max"] - 273.15).toFixed(1) + " °C"} <br>
+				Temperature Low: ${Number(weather["temp_min"] - 273.15).toFixed(1) + " °C"} <br>
+				<div class="form-group mx-sm-3 mb-2">
+						<button id="back" class="btn btn-light">Go back</button>
+				</div>
+			`
+				document.getElementById("temps_1").innerHTML = `Highest temp: ${Number(days[6]["temp"]["max"] - 273.15).toFixed(1) + " °C"} <br>
+														Lowest temp: ${Number(days[6]["temp"]["min"] - 273.15).toFixed(1) + " °C"}
+													`;
+				var i;
+				for (i = 2; i < 8; i ++) {
+					updateWeatherForecast(days, i);
+				}
+				$('#back').on("click", function() {
+						$(".sub-info").css("display", "flex");
+						$(".card").css("display", "none");
+						$(".background-2").css("display", "none");
+						$("#arrow").css("display", "none");
+				});
+			})
+			document.onscroll = function() {
+				if (window.innerHeight + window.scrollY > document.body.clientHeight) {
+					document.getElementById("arrow").css("display",'none');
+				}
+			}
 			$(".card").css("display", "none");
 			$(".background-2").css("display", "none");
 			$("#arrow").css("display", "none");
@@ -202,7 +281,6 @@
 					} else if (cloud.toLowerCase().includes("sun") || cloud.toLowerCase().includes("clear") ) {
 						$("#me").attr('src',"../styles/Potato_Sunny.png");
 					} 
-
 					$('#back').on("click", function() {
 						$(".sub-info").css("display", "flex");
 						$(".card").css("display", "none");
@@ -210,7 +288,6 @@
 						$("#arrow").css("display", "none");
 					});
 				});
-
 				// Get 7-day forecast using a different API
 				// Could have used this for current weather too but this API does not include the location name
 				$.getJSON('https://api.openweathermap.org/data/2.5/onecall?',  {
@@ -219,27 +296,24 @@
 					appid: "[Your API Key]"
 				}, function(data) {
 					console.log(data)
-					weather = data["daily"]
-					day_1 = weather[1]
-					day_2 = weather[2]
-					day_3 = weather[3]
-					day_4 = weather[4]
-					day_5 = weather[5]
-					day_6 = weather[6]
-					day_7 = weather[7]
-
+					var weather_l = data["daily"]
+					day_1 = weather_l[1]
+					day_2 = weather_l[2]
+					day_3 = weather_l[3]
+					day_4 = weather_l[4]
+					day_5 = weather_l[5]
+					day_6 = weather_l[6]
+					day_7 = weather_l[7]
 					var months = [ "January", "February", "March", "April", "May", "June",
 									"July", "August", "September", "October", "November", "December" ];	
 					var days = [day_2, day_3, day_4, day_5, day_6, day_7]
 					// Set dates 
-
 					// day 1
 					var today = new Date();
 					var dd = String(today.getDate()).padStart(2, '0');
 					var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 					var yyyy = today.getFullYear();
 					today_d = mm + '/' + dd + '/' + yyyy;
-
 					var descript = day_1["weather"][0]["description"]
 					var emoji_p = ""
 					if (descript.toLowerCase().includes("sun") || descript.toLowerCase().includes("clear")) {
@@ -250,27 +324,34 @@
 						emoji_p = "../styles/Rain.png"
 					}
 					console.log(emoji_p)
-					document.getElementById("d1").innerHTML = `Tomorrow`;
-					document.getElementById("d1_t").innerHTML = ` <img id="weather-pic" src=${emoji_p}></img><br>
-															${descript[0].toUpperCase() + descript.slice(1).toLowerCase()} <br>
-															Highest temp: ${Number(day_1["temp"]["max"] - 273.15).toFixed(1) + " °C"} <br>
-															Lowesss temp: ${Number(day_1["temp"]["min"] - 273.15).toFixed(1) + " °C"}
-														   `;
+					if (temp) {
+						document.getElementById("d1").innerHTML = `Tomorrow`;
+						document.getElementById("d1_t").innerHTML = ` <img id="weather-pic" src=${emoji_p}></img><br>
+																${descript[0].toUpperCase() + descript.slice(1).toLowerCase()} <br>
+																<p id="temps_1">Highest temp: ${Number(day_1["temp"]["max"] - 273.15).toFixed(1) + " °C"} <br>
+																Lowest temp: ${Number(day_1["temp"]["min"] - 273.15).toFixed(1) + " °C</p>"}
+															`;
+					} else {
+						document.getElementById("d1").innerHTML = `Tomorrow`;
+						document.getElementById("d1_t").innerHTML = ` <img id="weather-pic" src=${emoji_p}></img><br>
+																${descript[0].toUpperCase() + descript.slice(1).toLowerCase()} <br>
+																<p id="temps_1">Highest temp: ${Number((day_1["temp"]["max"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
+																Lowest temp: ${Number((day_1["temp"]["min"] - 273.15)* 9/5 + 32).toFixed(1) + " °F</p>"}
+															`;
+					}
 					var i;
 					for (i = 2; i < 8; i ++) {
 						setWeatherForecast(today, months, days, i);
 					}
 					$("#arrow").css("display", "flex");
-
 				});
 			})
-
 		});
-
-
 	</script>
 	<style>
-		
+		p {
+			margin: 0;
+		}
 		.background {
 			/* background-image: linear-gradient(#61B5D5, #8D61D5, #F3B8C9); */
 			background-image: url("../styles/background-2.png");
@@ -281,15 +362,12 @@
 			justify-content: center;
 			align-items: center;
 		}
-
-
 		#map {
 			height: 60vh;
 			width: 60vh;
 			border-radius: 30px;
 			margin-right: 5vw;
 		}
-
 		.sub-background {
 			background : rgba(250, 250, 250, 0.7);
 			border-radius: 30px;
@@ -300,24 +378,20 @@
 			align-items: center;
 			height: 70vh;
 		}
-
 		#info {
 			display: flex;
 			flex-direction: row;
 			border-radius: 30px;
 			width: 50vw;
 		}
-
 		#me {
 			height: 32vw;
 		}
-
 		#instruction {
 			font-size: 3vh;
 			width: 25vw;
 			text-align: center;
 		}
-
 		.sub-info {
 			display: flex;
 			flex-direction: column;
@@ -329,47 +403,39 @@
 			font-size: 5vh;
 			text-align: center;
 		}
-
 		input[type=text] {
 			background-color: transparent;
 			box-shadow: inset 0px 0px 0px 0px red;
 			outline-color: black;
 			outline: 0;
 		}
-
 		input {
 			border: 0;
 			outline: 0;
 			border-bottom: 2px solid black;
 		}
-
 		input[type=text]:focus{
 			outline: none;     
 		}
-
 		.loc-form {
 			display: flex;
 			flex-direction: column;
 			justify-content: space-evenly;
 			height: 14vh;
 		}
-
 		.card {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
 		}
-
 		#weather-details {
 			font-size: 2vh;
 			text-align: center;
 		}
-
 		#back {
 			margin-top: 1vh;
 		}
-
 		.background-2 {
 			/* background-image: linear-gradient(#61B5D5, #8D61D5, #F3B8C9); */
 			background-image: url("../styles/background-2\ copy.png");
@@ -380,7 +446,6 @@
 			justify-content: flex-start;
 			align-items: center;
 		}
-
 		.forecast {
 			display: flex;
 			flex-flow: row wrap;
@@ -394,7 +459,6 @@
 			flex-wrap: wrap;
 			margin-right: 0px;
 		}
-
 		#fore {
 			background : rgba(250,250,250, 0.7);
 			height: 32vh;
@@ -406,9 +470,15 @@
 			flex-shrink: 0;
 			flex-wrap: wrap;
 			/* margin-left: 2vw; */
-			padding: 0px !important;
+			padding-bottom: 20px;
+			padding-top: 20px;
+			opacity: 0.7;
+			transition: all .2s ease-in-out;
 		}
-
+		#fore:hover {
+			opacity: 1.0;
+			transform: scale(1.1); 
+		}
 		#weather-pic {
 			width: 13vh;
 			height: 13vh;
@@ -418,7 +488,6 @@
 			background-color: rgba(0,0,0, 0.3);
 			border-radius: 30px;
 		}
-
 		/* #fore-1 {
 			background : rgba(250, 250, 250, 0.7);
 			height: 30vh;
@@ -426,7 +495,6 @@
 			width: 30vh;
 		}
 		 */
-
 		#d1, #d2, #d3, #d4, #d5, #d6, #d7 {
 			background-color:#0B1345;
 			color: white;
@@ -435,18 +503,15 @@
 			border-radius: 30px;
 			margin-top: 7px;
 		}
-
 		#seven-forecast {
 			font-size: 5vh;
 			text-align: center;
 		}
-
 		@keyframes bouncing {
 			0% {bottom: 1vh;}
 			50% {bottom: 2vh;}
 			100% {bottom: 1vh;}
 		}
-
 		#arrow {
 			/* animation: bouncing 1s infinite ease-in-out; */
 			bottom: 0vh;
@@ -463,7 +528,6 @@
 			/* border-right: 1mm solid black;
 			border-left: 1mm solid black; */
 		}
-
 		#arrow-bkg {
 			animation: bouncing 1s infinite ease-in-out;
 			bottom: 0vh;
@@ -479,15 +543,27 @@
 			position: fixed;
 			font-family: 'Mandali', sans-serif;
 		}
-
 		#arrow p {
 			font-size: 5vh;
 			color: black;
 			text-align: center;
 		}
-
 		#arrow p:hover {
 			color: white;
+		}
+		.sub-background-2 {
+			border-radius: 30px;
+			width: 95vw;
+			height: 40vh;
+			padding-top: 2vh;
+			padding-bottom: 2vh;
+		}
+		.active, #celsius:hover, #farenheit:hover {
+			background-color: #666;
+			color: white;
+		}
+		#farenheit, #celsius {
+			margin-top: 1vh;
 		}
 	  </style>  
 </head>
