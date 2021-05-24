@@ -9,6 +9,8 @@ Run the following commands in the terminal ! Make sure you have docker
 
 ` docker run -p 8080:8080 -d weather-docker `
 
+Then go to http://localhost:8080/ on your browser :)
+
 ## Next Steps
 - [ ] Learn how to use secrets to store sensitive info
 
