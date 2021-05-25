@@ -1,55 +1,23 @@
-# Weather Teller ⛅️
+# Dockerizing [Weather Teller](https://github.com/ac-hj/weather-teller) ⛅️
 
-## Introduction
-A simple web app project built to review EJS and Ajax/JQuery and to have fun with designing characters in the app.
+Followed this [tutorial](https://nodejs.org/en/docs/guides/nodejs-docker-webapp/) for dockerizing node.js app !
 
-### Purpose
-This app allows you to look at the current weather anywhere in the world by clicking locations on the displayed map or manually adding longitude/latitude values.
-Based on the current weather, the potato character will change to reflect the weather!
+## Motivation 
+After encountering the word "docker" *many many* times throughout my internship last summer, I was extremely curious what docker was. Reading through various documents about dockers gave me some idea, but as usual, I thought doing some hands-on practice would be much more beneficial in learning why docker is so popular today.
 
-UPDATED (5/21): Now has 7-day forecast feature + fahrenheit/celsius conversion!
+After going through the entire [tutorial](https://docs.docker.com/get-started/) provided by Docker, I dockerized this simple weather app that I recently created based on what I learned with the tutorial. 
 
-### Demo
+## How to use
+Run the following commands in the terminal ! Make sure you have docker
 
-Sample demo of the weather page:
+` docker build -t weather-docker . `
 
-*The video may be a bit laggy*
+` docker run -p 8080:8080 -d weather-docker `
 
-<img src=https://github.com/ac-hj/weather-teller/blob/master/demo/demo-vid.gif alt="drawing" width="600"/>
+Then go to http://localhost:8080/ on your browser :)
 
-Screenshots of the app:
+## Next Steps
+- [ ] Learn how to use secrets to store sensitive info
 
-<img src="https://github.com/ac-hj/weather-teller/blob/master/demo/home-demo.png" alt="homepage" width="600"/>
-<img src=https://github.com/ac-hj/weather-teller/blob/master/demo/weather-demo.png alt="weather-page" width="600"/>
-<img src=https://github.com/ac-hj/weather-teller/blob/master/styles/forecast.png alt="forecast" width="600"/>
 
-### How to use
-1) Sign up for Google Maps and OpenWeatherMap APIs -- both are free to use 
-2) Replace "[Your API Key]" with yours in weatherpage.ejs file
-3) Run node app.js on the terminal and go to http://localhost:8080/ on browser
 
-## Tech Stack
-- Node.js
-- EJS
-- Ajax/JQuery
-- HTML/CSS
-- Procreate
-
-## APIs
-- Bootstrap
-- Google Maps API
-- OpenWeatherMap API
-
-## Design Credits
-- Main page background design was inspired by Art with Flo (https://www.youtube.com/watch?v=RzH3DCvsTx0&t=270s&ab_channel=ArtwithFlo)
-- Potato character design was inspired by Angela Kalokairinou (https://www.youtube.com/watch?v=RBUr9RdMMik&ab_channel=AngelaKalokairinou)
-
-##  Next Steps
-- [x] Add 7-day weather forecast feature (5/21)
-- [x] Add celsius/farenheit change (5/21)
-- [ ] Add more potato character designs to account for other different weathers. Currently there are sunny, cloudy, and rainy
-
-## Random learnings:
-- To delete some commit histories, do git log, git rebase git rebase -i <commit_hash>, and then change pick to drop. and then push?
-https://stackoverflow.com/questions/30893040/git-remove-commit-from-history
-- also git reset --hard doesn't work sometimes :(( gets confusing when using different branches
