@@ -8,7 +8,7 @@ After encountering the word "docker" *many many* times throughout my internship 
 After going through the entire [tutorial](https://docs.docker.com/get-started/) provided by Docker, I dockerized this simple weather app that I recently created based on what I learned with the tutorial. 
 
 ## How to use
-Run the following commands in the terminal ! Make sure you have docker
+Follow all of the steps [here](https://github.com/ac-hj/weather-teller) and run the following commands in the terminal ! Make sure you have docker
 
 ` docker build -t weather-docker . `
 
