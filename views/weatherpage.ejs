@@ -368,7 +368,7 @@
 					var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 					var yyyy = today.getFullYear();
 					today_d = mm + '/' + dd + '/' + yyyy;
-					// var descript = day_1["weather"][0]["description"]
+					var descript = day_1["weather"][0]["description"]
 					var emoji_p = ""
 					if (descript.toLowerCase().includes("sun") || descript.toLowerCase().includes("clear")) {
 						emoji_p = "../styles/Sun.png" 
