@@ -331,7 +331,10 @@
 					} else if (cloud.toLowerCase().includes("sun") || cloud.toLowerCase().includes("clear") ) {
 						$("#me").attr('src',"../styles/Potato_Sunny.png");
 						$("#me").css("width", "20vw");
-					} 
+					} else if (cloud.toLowerCase().includes("snow")) {
+						$("#me").attr('src',"../styles/Potato_Snow.png");
+					}
+
 					$('#back').on("click", function() {
 						$(".sub-info").css("display", "flex");
 						$(".card").css("display", "none");
@@ -365,7 +368,7 @@
 					var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 					var yyyy = today.getFullYear();
 					today_d = mm + '/' + dd + '/' + yyyy;
-					var descript = day_1["weather"][0]["description"]
+					// var descript = day_1["weather"][0]["description"]
 					var emoji_p = ""
 					if (descript.toLowerCase().includes("sun") || descript.toLowerCase().includes("clear")) {
 						emoji_p = "../styles/Sun.png" 
