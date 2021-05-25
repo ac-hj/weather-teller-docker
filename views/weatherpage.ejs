@@ -1,18 +1,23 @@
 <!DOCTYPE html> 
 <html>
 <head>
-	<title>Map</title>
+	<title>Weather Map</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script defer src="https://maps.googleapis.com/maps/api/js?key=[Your API Key]&callback=initMap"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript">
+		// Google map
 		var map;
+		// marker on the map
 		var marker;
+		// name of the selected location
 		var loc;
+		// current weather object
 		var weather;
 		// True = celsius, False = farenheit
 		var temp = true;
+		// array of 7-day weather forecast objects
 		var days;
 		
 		// Initializing the map
@@ -123,24 +128,25 @@
 			});
 		};
 		function displayMarker(latitude, longitude) {
+			// Initializing marker
 			marker = new google.maps.Marker({
 		 						position: new google.maps.LatLng(parseFloat(latitude), parseFloat(longitude)),
 			 					draggable: false,
 			 					map,
 			 					icon: {
-			 						url: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+			 						url: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png" // yellow marker
 			 					}
 		 					});
+			// show marker on the map
 			marker.setMap(map);
 		}
+		// Creates 7-day weather forecast HTML elements
 		function setWeatherForecast(today, months, days, day, celsius) {
 			today.setDate(today.getDate() + 1);
 					var dd = String(today.getDate()).padStart(2, '0');
 					var mm = months[today.getMonth()]; //January is 0!
 					var yyyy = today.getFullYear();
 					today_d = mm + " " + dd + ', ' + yyyy;
-					console.log(days)
-					console.log(days[0])
 					var descript = days[day-2]["weather"][0]["description"]
 					var id_1 = "d" + day;
 					var id_2 = "d" + day + "_t";
@@ -152,6 +158,8 @@
 						emoji_p = "../styles/Clouds.png"
 					} else if (descript.toLowerCase().includes("rain")) {
 						emoji_p = "../styles/Rain.png"
+					} else if (descript.toLowerCase().includes("snow")) {
+						emoji_p = "../styles/Snow.png"
 					}
 					document.getElementById(id_1).innerHTML = `${today_d}`;
 					if (celsius) {
@@ -168,6 +176,7 @@
 															`;
 					}
 		}
+		// Converts each weather forecast html object to display celsius or fahrenheit, depending which one was chosen
 		function updateWeatherForecast(days, i) {
 			var id = "temp_" + i;
 			if (temp) {
@@ -183,31 +192,38 @@
 			}
 		}
 		$(document).ready(function() {
+			// event listener for fahrenheit btn
 			$("#farenheit").on("click", function(){
+				
+				// changes the background color of the btns
 				$("#farenheit").addClass("active");
 				$("#celsius").removeClass("active");
+				
 				temp = false;
 				
-				console.log(weather)
+				// changes the current temperature to fahrenheit
 				document.getElementById("weather-details").innerHTML = `
-				Feels like: ${Number((weather["feels_like"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
-				Description: ${cloud} <br>
-				Humidity: ${weather["humidity"]} <br>
-				Temperature High: ${Number((weather["temp_max"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
-				Temperature Low: ${Number((weather["temp_min"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
-				<div class="form-group mx-sm-3 mb-2">
-						<button id="back" class="btn btn-light">Go back</button>
-				</div>
-			`	
-				console.log(days)
+							Feels like: ${Number((weather["feels_like"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
+							Description: ${cloud} <br>
+							Humidity: ${weather["humidity"]} <br>
+							Temperature High: ${Number((weather["temp_max"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
+							Temperature Low: ${Number((weather["temp_min"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
+							<div class="form-group mx-sm-3 mb-2">
+									<button id="back" class="btn btn-light">Go back</button>
+							</div>
+				`	
+				
+				// changing for the first day in the 7-day forecast
 				document.getElementById("temps_1").innerHTML = `
 														Highest temp: ${Number((days[6]["temp"]["max"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"} <br>
 														Lowest temp: ${Number((days[6]["temp"]["min"] - 273.15)* 9/5 + 32).toFixed(1) + " °F"}
 													`;
+				// updating rest of the forecasts to show temperatures in fahrenheit 
 				var i;
 				for (i = 2; i < 8; i ++) {
 					updateWeatherForecast(days, i);
 				}
+				// adding this event listener for back button again to ensure that the buttons functions as it should after re-adding
 				$('#back').on("click", function() {
 						$(".sub-info").css("display", "flex");
 						$(".card").css("display", "none");
@@ -215,20 +231,24 @@
 						$("#arrow").css("display", "none");
 				});
 			})
+			// event listener for celsius btn
 			$("#celsius").on("click", function(){
+				// changes the background color of the btns
 				$("#celsius").addClass("active");
 				$("#farenheit").removeClass("active");
 				temp = true;
+				// changes the current temperature to fahrenheit
 				document.getElementById("weather-details").innerHTML = `
-				Feels like: ${Number(weather["feels_like"] - 273.15).toFixed(1) + " °C"} <br>
-				Description: ${cloud} <br>
-				Humidity: ${weather["humidity"]} <br>
-				Temperature High: ${Number(weather["temp_max"] - 273.15).toFixed(1) + " °C"} <br>
-				Temperature Low: ${Number(weather["temp_min"] - 273.15).toFixed(1) + " °C"} <br>
-				<div class="form-group mx-sm-3 mb-2">
-						<button id="back" class="btn btn-light">Go back</button>
-				</div>
-			`
+							Feels like: ${Number(weather["feels_like"] - 273.15).toFixed(1) + " °C"} <br>
+							Description: ${cloud} <br>
+							Humidity: ${weather["humidity"]} <br>
+							Temperature High: ${Number(weather["temp_max"] - 273.15).toFixed(1) + " °C"} <br>
+							Temperature Low: ${Number(weather["temp_min"] - 273.15).toFixed(1) + " °C"} <br>
+							<div class="form-group mx-sm-3 mb-2">
+									<button id="back" class="btn btn-light">Go back</button>
+							</div>
+				` 
+				// changing for the first day in the 7-day forecast
 				document.getElementById("temps_1").innerHTML = `Highest temp: ${Number(days[6]["temp"]["max"] - 273.15).toFixed(1) + " °C"} <br>
 														Lowest temp: ${Number(days[6]["temp"]["min"] - 273.15).toFixed(1) + " °C"}
 													`;
@@ -236,6 +256,8 @@
 				for (i = 2; i < 8; i ++) {
 					updateWeatherForecast(days, i);
 				}
+				
+				// again, adding the event listener for the back btn
 				$('#back').on("click", function() {
 						$(".sub-info").css("display", "flex");
 						$(".card").css("display", "none");
@@ -243,20 +265,28 @@
 						$("#arrow").css("display", "none");
 				});
 			})
-			document.onscroll = function() {
-				if (window.innerHeight + window.scrollY > document.body.clientHeight) {
-					document.getElementById("arrow").css("display",'none');
-				}
-			}
+			// document.onscroll = function() {
+			// 	if (window.innerHeight + window.scrollY > document.body.clientHeight) {
+			// 		document.getElementById("arrow").css("display",'none');
+			// 	}
+			// }
+			
+			// hiding the current weather HTML elements in the beginning
 			$(".card").css("display", "none");
+			// hiding the forecast HTML elements, as well as the arrow to navigate to the forecast elements
 			$(".background-2").css("display", "none");
 			$("#arrow").css("display", "none");
+			
+			// event listener for "Check" button, which shows the weather for the location when clicked
 			$('#update').on("click", function() {
 				var latitude = document.getElementById("latitude").value;
 				var longitude = document.getElementById("longitude").value;
+				// hiding the longitude and latitude elements
 				$(".sub-info").css("display", "none");
+				// displaying the current weather and forecast elements now
 				$(".card").css("display", "flex");
 				$(".background-2").css("display", "flex");
+				// API Call to get the current weather 
 				$.getJSON('https://api.openweathermap.org/data/2.5/weather?', {
 					lat: latitude,
 					lon: longitude,
@@ -268,6 +298,7 @@
 					cloud = data["weather"][0]["description"]
 					document.getElementById("weather-card").innerHTML = `Weather for ${loc} right now`;
 					document.getElementById("seven-forecast").innerHTML = `Daily`
+					// Checking if the weather should be in fahrenheit or celsius
 					if (temp) {
 						document.getElementById("weather-details").innerHTML = `
 						Feels like: ${Number(weather["feels_like"] - 273.15).toFixed(1) + " °C"} <br>
@@ -292,6 +323,7 @@
 					`
 					}
 					
+					// displaying designs based on the weather 
 					if (cloud.toLowerCase().includes("cloud")) {
 						$("#me").attr('src',"../styles/Potato_Cloud.gif");
 					} else if (cloud.toLowerCase().includes("rain")) {
@@ -341,8 +373,10 @@
 						emoji_p = "../styles/Clouds.png"
 					} else if (descript.toLowerCase().includes("rain")) {
 						emoji_p = "../styles/Rain.png"
+					} else if (descript.toLowerCase().includes("snow")) {
+						emoji_p = "../styles/Snow.png"
 					}
-					console.log(emoji_p)
+					
 					if (temp) {
 						document.getElementById("d1").innerHTML = `Tomorrow`;
 						document.getElementById("d1_t").innerHTML = ` <img id="weather-pic" src=${emoji_p}></img><br>
@@ -362,6 +396,7 @@
 					for (i = 2; i < 8; i ++) {
 						setWeatherForecast(today, months, days, i, temp);
 					}
+					// show the arrow now!
 					$("#arrow").css("display", "flex");
 				});
 			})
@@ -465,6 +500,7 @@
 			justify-content: flex-start;
 			align-items: center;
 		}
+		
 		.forecast {
 			display: flex;
 			flex-flow: row wrap;
@@ -584,6 +620,7 @@
 			background-color: #666;
 			color: white;
 		}
+		
 		#farenheit, #celsius {
 			margin-top: 1vh;
 		}
@@ -609,7 +646,7 @@
 									<input id="longitude" type="text" autocomplete="off" name="longitude" placeholder="Enter longitude" required>
 								</div>
 								<div class="form-group mx-sm-3 mb-2">
-									<button id="update" class="btn btn-light">Find</button>
+									<button id="update" class="btn btn-light">Check</button>
 								</div>
 							</div>
 						</div>

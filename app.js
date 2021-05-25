@@ -8,14 +8,12 @@ app.use(session({
 }));
 app.use(express.static(__dirname));
 
-/* Seven routes */
+/* all of the routes */
 app.get('/', routes.get_main);
 app.get('/weatherpage', routes.get_weather);
 app.post('/weatherdata')
 
 
 /* Run the server */
-
-console.log('Author: Hyeon Jeong Choi (choihye)');
 app.listen(8080);
 console.log('Server running on port 80. Now open http://localhost:8080/ in your browser!');

@@ -1,14 +1,6 @@
-
 /* Route for the main login page. Displays messages depending on the query value */ 
 var getMain = function(req, res) {
-  var msgParam = req.query.msg;
-  var message;
-  // Checks if the user is already logged in. If so, redirects to the restaurant page right away.
-  if ((typeof req.session.username !== "undefined") && (req.session.username !== null)) {
-	res.redirect('/restaurants');
-  } else {
-	res.render('main.ejs', {message: message});
-  }
+  res.render('main.ejs');
 };
 
 /* Route for /weatherpage */
